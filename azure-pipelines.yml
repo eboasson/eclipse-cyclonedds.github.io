@@ -27,7 +27,7 @@ pool:
 steps:
   - task: UsePythonVersion@0
     inputs:
-      versionSpec: '3.10'
+      versionSpec: '3.10.15'
     name: install_python
     displayName: Install Python
   - bash: |
@@ -48,22 +48,22 @@ steps:
       poetry run builder --commit-if-updated --repos ./repos
     name: run_site_builder
     displayName: Run site build
-  - task: InstallSSHKey@0
-    inputs:
-      knownHostsEntry: $(known_hosts_entry)
-      sshKeySecureFile: deploy_key
-  - bash: |
-      set -ex
-      # was-updated is written by the builder if there are updates
-      if [[ -f "was-updated" ]]; then
-        # push builders commit
-        git config --local user.name "Azure Pipelines"
-        git config --local user.email "azuredevops@microsoft.com"
-        git config --global --add url."git@github.com:".insteadOf "https://github.com/"
-        git push
-        # Let python tool handle the gh-pages sync
-        poetry run ghp-import --no-jekyll --cname=cyclonedds.io --message="Azure build ${BUILD_BUILDNUMBER} for commit $(git rev-parse --verify HEAD)" --no-history pages/
-        git push -f origin gh-pages
-      fi
-    name: publish
-    displayName: Publish
+  #- task: InstallSSHKey@0
+  #  inputs:
+  #    knownHostsEntry: $(known_hosts_entry)
+  #    sshKeySecureFile: deploy_key
+  #- bash: |
+  #    set -ex
+  #    # was-updated is written by the builder if there are updates
+  #    if [[ -f "was-updated" ]]; then
+  #      # push builders commit
+  #      git config --local user.name "Azure Pipelines"
+  #      git config --local user.email "azuredevops@microsoft.com"
+  #      git config --global --add url."git@github.com:".insteadOf "https://github.com/"
+  #      git push
+  #      # Let python tool handle the gh-pages sync
+  #      poetry run ghp-import --no-jekyll --cname=cyclonedds.io --message="Azure build ${BUILD_BUILDNUMBER} for commit $(git rev-parse --verify HEAD)" --no-history pages/
+  #      git push -f origin gh-pages
+  #    fi
+  #  name: publish
+  #  displayName: Publish
